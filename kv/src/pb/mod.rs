@@ -2,9 +2,44 @@ pub mod abi;
 
 use http::StatusCode;
 
-use crate::{KvError, Value};
+use crate::{CommandRequest, Hset, KvError, Kvpair, Value};
 
 use crate::pb::abi::CommandResponse;
+
+impl Kvpair {
+    fn new(key: impl Into<String>, value: Value) -> Self {
+        Self {
+            key: key.into(),
+            value: Some(value),
+        }
+    }
+}
+
+impl CommandRequest {
+    pub fn new_hset(table: impl Into<String>, key: impl Into<String>, value: Value) -> Self {
+        Self {
+            request_data: Some(crate::command_request::RequestData::Hset(Hset {
+                table: table.into(),
+                pair: Some(Kvpair::new(key, value)),
+            })),
+        }
+    }
+}
+
+impl From<&str> for Value {
+    fn from(value: &str) -> Self {
+        Self {
+            value: Some(crate::value::Value::String(value.into())),
+        }
+    }
+}
+impl From<String> for Value {
+    fn from(value: String) -> Self {
+        Self {
+            value: Some(crate::value::Value::String(value)),
+        }
+    }
+}
 
 impl From<Value> for CommandResponse {
     fn from(value: Value) -> Self {
