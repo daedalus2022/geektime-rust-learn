@@ -1,5 +1,5 @@
 use async_prost::AsyncProstStream;
-use futures::{SinkExt, StreamExt};
+use futures::prelude::*;
 use kv::{CommandRequest, CommandResponse};
 use tokio::net::TcpStream;
 use tracing::info;
