@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 bytes = "1" # 高效处理网络 buffer 的库
 dashmap = "4" # 并发 HashMap
-http = "0.2" # 我们使用 HTTP status code 所以引入这个类型库
+http = "0.2" # 我们使用 HTTP status code 所以引入这个类型库，// 不能升级版本，升级后找不到steam的next方法
 prost = "0.9" # 处理 protobuf 的代码
 thiserror = "1" # 错误定义和处理
 tracing = "0.1" # 日志处理
