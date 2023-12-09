@@ -82,6 +82,7 @@ impl From<Value> for CommandResponse {
     }
 }
 
+/// 从 KvError 转换成 CommandResponse
 impl From<KvError> for CommandResponse {
     fn from(e: KvError) -> Self {
         let mut result = Self {

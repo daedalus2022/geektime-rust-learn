@@ -42,7 +42,7 @@ impl CommandService for Hset {
                 Ok(None) => Value::default().into(),
                 Err(e) => e.into(),
             },
-            None => KvError::InvalidCommand(format!("{:?}", self)).into(),
+            None => Value::default().into(),
         }
     }
 }
@@ -60,6 +60,7 @@ impl CommandService for Hexist {
 #[cfg(test)]
 mod tests {
     use crate::{
+        assert_res_error, assert_res_ok,
         command_request::RequestData,
         storage::{MemTable, Storage},
         CommandRequest, CommandResponse, CommandService, Kvpair, Value,
@@ -131,22 +132,5 @@ mod tests {
             Some(RequestData::Hset(v)) => v.execute(store),
             _ => todo!(),
         }
-    }
-
-    // 测试成功返回的结果
-    fn assert_res_ok(mut res: CommandResponse, values: &[Value], pairs: &[Kvpair]) {
-        res.pairs.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        assert_eq!(res.status, 200);
-        assert_eq!(res.message, "");
-        assert_eq!(res.values, values);
-        assert_eq!(res.pairs, pairs);
-    }
-
-    // 测试失败返回的结果
-    fn assert_res_error(res: CommandResponse, code: u32, msg: &str) {
-        assert_eq!(res.status, code);
-        assert!(res.message.contains(msg));
-        assert_eq!(res.values, &[]);
-        assert_eq!(res.pairs, &[]);
     }
 }
