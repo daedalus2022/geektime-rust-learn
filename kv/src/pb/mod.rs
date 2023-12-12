@@ -32,6 +32,24 @@ impl CommandRequest {
             })),
         }
     }
+
+    pub fn new_hcontains(table: impl Into<String>, key: impl Into<String>) -> Self {
+        Self {
+            request_data: Some(crate::command_request::RequestData::Hexist(crate::Hexist {
+                table: table.into(),
+                key: key.into(),
+            })),
+        }
+    }
+
+    pub fn new_hdel(table: impl Into<String>, key: impl Into<String>) -> Self {
+        Self {
+            request_data: Some(crate::command_request::RequestData::Hdel(crate::Hdel {
+                table: table.into(),
+                key: key.into(),
+            })),
+        }
+    }
 }
 
 impl Kvpair {
@@ -113,5 +131,11 @@ impl From<Vec<Kvpair>> for CommandResponse {
             pairs: value,
             ..Default::default()
         }
+    }
+}
+
+impl From<(String, Value)> for Kvpair {
+    fn from(value: (String, Value)) -> Self {
+        Kvpair::new(value.0, value.1)
     }
 }

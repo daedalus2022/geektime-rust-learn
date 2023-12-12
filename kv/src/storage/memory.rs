@@ -1,6 +1,6 @@
 use dashmap::{mapref::one::Ref, DashMap};
 
-use crate::{Kvpair, Value};
+use crate::{Kvpair, StorageIter, Value};
 
 use super::Storage;
 
@@ -65,6 +65,14 @@ impl Storage for MemTable {
         &self,
         table: &str,
     ) -> Result<Box<dyn Iterator<Item = crate::Kvpair>>, crate::KvError> {
-        Ok(Box::new(self.get_all(table).ok().unwrap().into_iter()))
+        // 使用 clone() 来获取 table 的 snapshot
+        let table = self.get_or_create_table(table).clone();
+
+        // let iter = table.into_iter().map(|v|v.into());
+
+        let iter = StorageIter::new(table.into_iter());
+
+        Ok(Box::new(iter))
+        // Ok(Box::new(self.get_all(table).ok().unwrap().into_iter()))
     }
 }

@@ -1,6 +1,6 @@
 use crate::{
     storage::{MemTable, Storage},
-    CommandResponse, Hexist, Hget, Hgetall, Hset, KvError, Value,
+    CommandResponse, Hdel, Hexist, Hget, Hgetall, Hset, KvError, Value,
 };
 
 ///
@@ -52,6 +52,16 @@ impl CommandService for Hexist {
         match store.contains(&self.table, &self.key) {
             Ok(v) => Value::from(v).into(),
             Err(_e) => KvError::NotFound(self.table, self.key).into(),
+        }
+    }
+}
+
+impl CommandService for Hdel {
+    fn execute(self, store: &impl Storage) -> CommandResponse {
+        match store.del(&self.table, &self.key) {
+            Ok(Some(value)) => value.into(),
+            Ok(None) => Value::default().into(),
+            Err(e) => e.into(),
         }
     }
 }
