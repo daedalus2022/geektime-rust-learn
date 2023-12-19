@@ -18,6 +18,8 @@ async-prost = "0.3" # 支持把 protobuf 封装成 TCP frame // 不能升级版�
 futures = "0.3" # 提供 Stream trait
 tokio = { version = "1", features = ["rt", "rt-multi-thread", "io-util", "macros", "net" ] } # 异步网络库
 tracing-subscriber = "0.3" # 日志处理
+sled = "0.34" # sled db
+tempfile = "3" # 处理临时目录和临时文件
 
 [build-dependencies]
 prost-build = "0.12" # 编译 protobuf

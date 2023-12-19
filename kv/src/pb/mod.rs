@@ -1,6 +1,7 @@
 pub mod abi;
 
 use http::StatusCode;
+use prost::Message;
 
 use crate::{CommandRequest, Hget, Hgetall, Hset, KvError, Kvpair, Value};
 
@@ -118,6 +119,7 @@ impl From<KvError> for CommandResponse {
             KvError::EncodeError(_) => todo!(),
             KvError::DecodeError(_) => todo!(),
             KvError::Internal(_) => todo!(),
+            KvError::SledError(_) => todo!(),
         }
 
         result
@@ -137,5 +139,25 @@ impl From<Vec<Kvpair>> for CommandResponse {
 impl From<(String, Value)> for Kvpair {
     fn from(value: (String, Value)) -> Self {
         Kvpair::new(value.0, value.1)
+    }
+}
+
+impl TryFrom<&[u8]> for Value {
+    type Error = KvError;
+
+    fn try_from(data: &[u8]) -> Result<Self, Self::Error> {
+        let msg = Value::decode(data)?;
+        Ok(msg)
+    }
+}
+
+impl TryFrom<Value> for Vec<u8> {
+    type Error = KvError;
+
+    fn try_from(value: Value) -> Result<Self, Self::Error> {
+        let mut buf = Vec::with_capacity(value.encoded_len());
+        let _ = value.encode(&mut buf);
+
+        Ok(buf)
     }
 }

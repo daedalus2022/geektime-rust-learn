@@ -1,7 +1,9 @@
 mod memory;
+mod sleddb;
 
 use crate::{KvError, Kvpair, Value};
 pub use memory::*;
+pub use sleddb::*;
 
 /// 对存储的抽象，我们不关心数据存在哪儿，但需要定义外界如何和存储打交道
 pub trait Storage {
@@ -51,7 +53,10 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::Kvpair;
+
+    use tempfile::tempdir;
+
+    use crate::{Kvpair, SledDb};
 
     use super::{memory::MemTable, Storage};
 
@@ -60,6 +65,10 @@ mod tests {
         let store = MemTable::new();
 
         test_basi_interface(store);
+
+        let dir = tempdir().unwrap();
+        let store = SledDb::new(dir);
+        test_basi_interface(store)
     }
 
     #[test]
